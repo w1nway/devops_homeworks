@@ -1,1 +1,1 @@
-# devops_homeworks
+# Домашки по DevOps курсу
