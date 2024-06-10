@@ -1,0 +1,42 @@
+---
+- name: Set up remote server
+  hosts: remote_server
+  become: true
+
+  vars:
+    user_name: newuser
+    ssh_pub_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    target_directory: /opt/newdirectory
+
+  tasks:
+    - name: Create a new user
+      user:
+        name: "{{ user_name }}"
+        state: present
+
+    - name: Set up SSH key for the user
+      authorized_key:
+        user: "{{ user_name }}"
+        key: "{{ ssh_pub_key }}"
+
+    - name: Disable password-based SSH login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+      notify:
+        - Reload SSH
+
+    - name: Create a directory with specific ownership and permissions
+      file:
+        path: "{{ target_directory }}"
+        state: directory
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: '0755'
+
+  handlers:
+    - name: Reload SSH
+      service:
+        name: sshd
+        state: reloaded

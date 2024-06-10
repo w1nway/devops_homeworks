@@ -1,6 +1,6 @@
-Чтобы проверить корректность работы:
+# ДЗ 1
 
-chmod +x your_file_nime.sh
+## Команда: chmod +x your_file_nime.sh
 
 ## 1) Через "-d":
 ex: ./your_file_nime.sh -d /any_path
